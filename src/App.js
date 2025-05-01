@@ -8,8 +8,8 @@ export default function App() {
     avgPrice: "",
     currentPrice: ""
   });
+  const [editingIndex, setEditingIndex] = useState(-1);
 
-  // ✅ 앱 로드 시 localStorage에서 포트폴리오 불러오기
   useEffect(() => {
     const saved = localStorage.getItem("portfolio");
     if (saved) {
@@ -23,24 +23,49 @@ export default function App() {
     }
   }, []);
 
-  // ✅ 포트폴리오가 바뀔 때마다 저장
   useEffect(() => {
     localStorage.setItem("portfolio", JSON.stringify(portfolio));
   }, [portfolio]);
 
   const handleAdd = () => {
-    const newEntry = {
+    const entry = {
       name: newItem.name,
       shares: parseInt(newItem.shares),
       avgPrice: parseFloat(newItem.avgPrice),
       currentPrice: parseFloat(newItem.currentPrice)
     };
-    setPortfolio([...portfolio, newEntry]);
+
+    if (editingIndex >= 0) {
+      const updated = [...portfolio];
+      updated[editingIndex] = entry;
+      setPortfolio(updated);
+      setEditingIndex(-1);
+    } else {
+      setPortfolio([...portfolio, entry]);
+    }
+
     setNewItem({ name: "", shares: "", avgPrice: "", currentPrice: "" });
   };
 
   const handleChange = (e) => {
     setNewItem({ ...newItem, [e.target.name]: e.target.value });
+  };
+
+  const handleDelete = (idx) => {
+    const updated = [...portfolio];
+    updated.splice(idx, 1);
+    setPortfolio(updated);
+  };
+
+  const handleEdit = (idx) => {
+    const item = portfolio[idx];
+    setNewItem({
+      name: item.name,
+      shares: item.shares,
+      avgPrice: item.avgPrice,
+      currentPrice: item.currentPrice
+    });
+    setEditingIndex(idx);
   };
 
   const totalValue = portfolio.reduce(
@@ -59,7 +84,7 @@ export default function App() {
           padding: "1rem"
         }}
       >
-        <h2>종목 추가</h2>
+        <h2>{editingIndex >= 0 ? "종목 수정" : "종목 추가"}</h2>
         <input
           name="name"
           placeholder="종목명"
@@ -84,7 +109,7 @@ export default function App() {
           value={newItem.currentPrice}
           onChange={handleChange}
         />
-        <button onClick={handleAdd}>➕ 추가</button>
+        <button onClick={handleAdd}>{editingIndex >= 0 ? "✅ 수정" : "➕ 추가"}</button>
       </div>
 
       {portfolio.map((stock, idx) => {
@@ -106,6 +131,8 @@ export default function App() {
             <p>
               손익: {profit.toLocaleString()}원 ({rate.toFixed(2)}%)
             </p>
+            <button onClick={() => handleEdit(idx)}>✏️ 수정</button>
+            <button onClick={() => handleDelete(idx)}>🗑 삭제</button>
           </div>
         );
       })}
