@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import recommendationData from "./recommendations.json";
 
 export default function App() {
@@ -12,8 +13,24 @@ export default function App() {
   });
   const [editingIndex, setEditingIndex] = useState(-1);
 
+  // 추천 종목 가격 서버에서 가져오기
   useEffect(() => {
-    setRecommendations(recommendationData);
+    const fetchPrices = async () => {
+      const updated = await Promise.all(
+        recommendationData.map(async (item) => {
+          try {
+            const res = await axios.get(`http://localhost:3001/price/${item.name}`);
+            return { ...item, currentPrice: res.data.price };
+          } catch (e) {
+            console.error(`${item.name} 가격 조회 실패`, e);
+            return { ...item, currentPrice: item.avgPrice }; // fallback
+          }
+        })
+      );
+      setRecommendations(updated);
+    };
+
+    fetchPrices();
   }, []);
 
   useEffect(() => {
