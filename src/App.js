@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import recommendationData from "./recommendations.json";
 
 export default function App() {
   const [portfolio, setPortfolio] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [newItem, setNewItem] = useState({
     name: "",
     shares: "",
@@ -10,13 +12,9 @@ export default function App() {
   });
   const [editingIndex, setEditingIndex] = useState(-1);
 
-  const recommendations = [
-    { name: "한국조선해양", shares: 10, avgPrice: 90000, currentPrice: 91000 },
-    { name: "한화에어로스페이스", shares: 5, avgPrice: 110000, currentPrice: 112000 },
-    { name: "LX세미콘", shares: 7, avgPrice: 85000, currentPrice: 86000 },
-    { name: "NAVER", shares: 4, avgPrice: 175000, currentPrice: 178000 },
-    { name: "두산에너빌리티", shares: 20, avgPrice: 18000, currentPrice: 18200 }
-  ];
+  useEffect(() => {
+    setRecommendations(recommendationData);
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem("portfolio");
@@ -96,8 +94,16 @@ export default function App() {
         <h2>📌 초저평가 추천 종목</h2>
         {recommendations.map((rec, i) => (
           <div key={i} style={{ marginBottom: "0.5rem" }}>
-            <span>{rec.name} (수량: {rec.shares}, 매수가: {rec.avgPrice}, 현재가: {rec.currentPrice})</span>
-            <button onClick={() => handleAddRecommendation(rec)} style={{ marginLeft: "0.5rem" }}>➕ 추가</button>
+            <span>
+              {rec.name} (수량: {rec.shares}, 매수가: {rec.avgPrice.toLocaleString()}원,
+              현재가: {rec.currentPrice.toLocaleString()}원)
+            </span>
+            <button
+              onClick={() => handleAddRecommendation(rec)}
+              style={{ marginLeft: "0.5rem" }}
+            >
+              ➕ 추가
+            </button>
           </div>
         ))}
       </div>
