@@ -52,6 +52,9 @@ export default function App() {
   };
 
   const handleDelete = (idx) => {
+    const confirmDelete = window.confirm("정말 이 종목을 삭제하시겠습니까?");
+    if (!confirmDelete) return;
+
     const updated = [...portfolio];
     updated.splice(idx, 1);
     setPortfolio(updated);
