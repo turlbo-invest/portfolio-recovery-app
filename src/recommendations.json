@@ -1,0 +1,7 @@
+[
+  { "name": "한국조선해양", "shares": 10, "avgPrice": 89900, "currentPrice": 89900 },
+  { "name": "한화에어로스페이스", "shares": 5, "avgPrice": 109000, "currentPrice": 109000 },
+  { "name": "LX세미콘", "shares": 7, "avgPrice": 84900, "currentPrice": 84900 },
+  { "name": "NAVER", "shares": 4, "avgPrice": 174000, "currentPrice": 174000 },
+  { "name": "두산에너빌리티", "shares": 20, "avgPrice": 18100, "currentPrice": 18100 }
+]
